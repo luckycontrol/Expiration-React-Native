@@ -1,11 +1,13 @@
 import React from 'react';
-import Login from './components/account/Login';
+import Login from './screens/account/Login';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import CreateAccount from './components/account/CreateAccount';
-import ProductList from './components/main/list/ProductList';
+import CreateAccount from './screens/account/CreateAccount';
+import ProductList from './screens/main/list/ProductList';
 import { Provider } from 'react-redux';
 import { store } from './store';
+import Main from './screens/main/Main';
+import Add from './screens/main/add/Add';
 
 export default function App() {
 
@@ -28,7 +30,8 @@ export default function App() {
             { headerShown: false }
           }
         >
-          <Stack.Screen name="List" component={ProductList} />
+          <Stack.Screen name="List" component={Main} />
+          <Stack.Screen name="Add" component={Add} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>

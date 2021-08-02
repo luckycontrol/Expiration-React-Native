@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    selected: "음식"
+    value: "음식"
 }
 
 export const categorySlice = createSlice({
@@ -9,7 +9,7 @@ export const categorySlice = createSlice({
     initialState,
     reducers: {
         setCategory: (state, action) => {
-            state.selected = action.payload
+            state.value = action.payload
         }
     }
 });
