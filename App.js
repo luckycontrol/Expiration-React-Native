@@ -16,20 +16,20 @@ export default function App() {
   return (
     <Provider store={store}>
       <NavigationContainer>
-        {/* <Stack.Navigator
-          screenOptions={
-            { headerShown: false }
-          }
-        >
-          <Stack.Screen name="Login" component={Login} />
-          <Stack.Screen name="CreateAccount" component={CreateAccount} />
+          {/* <Stack.Navigator
+            screenOptions={
+              { headerShown: false }
+            }
+          >
+            <Stack.Screen name="Login" component={Login} />
+            <Stack.Screen name="CreateAccount" component={CreateAccount} />
 
-        </Stack.Navigator> */}
-        <Stack.Navigator
-          screenOptions={
-            { headerShown: false }
-          }
-        >
+          </Stack.Navigator> */}
+          <Stack.Navigator
+            screenOptions={
+              { headerShown: false }
+            }
+          >
           <Stack.Screen name="List" component={Main} />
           <Stack.Screen name="Add" component={Add} />
         </Stack.Navigator>

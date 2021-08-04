@@ -7,7 +7,7 @@ const Main = ({ navigation }) => {
 
     const [menu, setMenu] = useState(false);
 
-    const offsetValue = useRef(new Animated.Value(0)).current;
+    const offsetValue = useRef(new Animated.ValueXY({ x: 0, y: 0 })).current;
     const scaleValue = useRef(new Animated.Value(1)).current;
 
     const ScaleTransitionEffect = () => {
@@ -18,7 +18,7 @@ const Main = ({ navigation }) => {
         }).start();
 
         Animated.timing(offsetValue, {
-            toValue: menu ? 0 : 220,
+            toValue: menu ? { x: 0, y: 0 } : { x: 220, y: 0 },
             duration: 300,
             useNativeDriver: true
         }).start()

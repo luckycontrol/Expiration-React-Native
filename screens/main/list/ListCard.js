@@ -4,20 +4,22 @@ import tw from "tailwind-react-native-classnames"
 
 const ListCard = ({ item }) => {
 
+    const expiration = new Date(item.expiration);
+
     return (
         <View 
-            style={tw`h-20 mx-5 my-2 bg-white rounded-md p-2 shadow-sm flex-row justify-between items-center`}
+            style={tw`h-20 my-2 bg-white p-5 shadow-sm flex-row justify-between items-center`}
         >
-            <View style={tw`flex-row`}>
-                <Image style={tw`w-14 h-14`} source={require("../../../assets/icon.png")} />
+            <View style={{ flexDirection: "row" }}>
+                <Image style={{ width: 50, height: 50, borderRadius: 10 }} source={ item.image ? { uri: item.image } : require("../../../assets/icon.png")} />
                 <View style={tw`justify-around ml-3`}>
-                    <Text>{item.title}</Text>
-                    <Text>타입</Text>
+                    <Text style={{ fontSize: 16, fontWeight: "500" }} >{item.name}</Text>
+                    <Text>{item.type}</Text>
                 </View>
             </View>
 
             <View style={tw`mr-3`}>
-                <Text>유통기한</Text>
+                <Text>{`${expiration.getFullYear()}년 ${expiration.getMonth() + 1}월 ${expiration.getDate()}일`}</Text>
             </View>
         </View>
     )

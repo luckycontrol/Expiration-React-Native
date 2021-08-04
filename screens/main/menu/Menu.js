@@ -4,6 +4,7 @@ import { View, Text, SafeAreaView, Image, TouchableOpacity } from 'react-native'
 import tw from "tailwind-react-native-classnames"
 import { useSelector, useDispatch } from 'react-redux'
 import { setCategory } from '../../../features/Category/categorySlice'
+import * as Haptics from "expo-haptics"
 
 const list = ["음식", "생활용품"]
 
@@ -21,7 +22,10 @@ const Menu = ({ ScaleTransitionEffect }) => {
         >
 
             <TouchableOpacity
-                onPress={ScaleTransitionEffect}
+                onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                    ScaleTransitionEffect()
+                }}
             >
                 <Image
                     source={require("../../../assets/close.png")} 
@@ -49,7 +53,10 @@ const Menu = ({ ScaleTransitionEffect }) => {
                                     <TouchableOpacity
                                         style={tw`p-2 my-1 w-24 h-10 justify-center rounded-md shadow-sm`}
                                         key={category}
-                                        onPress={() => dispatch(setCategory(category))}
+                                        onPress={() => {
+                                            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+                                            dispatch(setCategory(category));
+                                        }}
                                     >
                                         <Text style={tw`text-white`} >{category}</Text>
                                     </TouchableOpacity>
