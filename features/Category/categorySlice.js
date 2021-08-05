@@ -13,20 +13,36 @@ export const categorySlice = createSlice({
             state.value = action.payload
         },
 
+        setCategoryList: (state, action) => {
+            action.payload.map(({ categoryName }) => {
+                state.categoryList.push(categoryName);
+            })
+        },
+
         createCategory: (state, action) => {
-            state.categoryList = state.categoryList.concat(categoryList, action.payload);
+            state.categoryList.push(action.payload);
         },
 
         deleteCategory: (state, action) => {
             state.categoryList = state.categoryList.filter((category) => category != action.payload);
+        },
+
+        resetCategory: (state, action) => {
+            if (state.categoryList.length >= 0) {
+                state.value = state.categoryList[0];
+            } else {
+                state.value = ""
+            }
         }
     }
 });
 
 export const {
-    setCategory, 
+    setCategory,
+    setCategoryList,
     createCategory,
-    deleteCategory
+    deleteCategory,
+    resetCategory
 } = categorySlice.actions;
 
 export default categorySlice.reducer;

@@ -24,9 +24,9 @@ import url from '../../../api/url'
 
 const ProductList = ({ navigation, menu, scaleValue, offsetValue, ScaleTransitionEffect }) => {
 
-    const selectedCategory  = useSelector((state) => state.category.value);
-    const productUpdateState    = useSelector((state) => state.productUpdate.value);
-    const dispatch          = useDispatch();
+    const selectedCategory   = useSelector((state) => state.category.value);
+    const productUpdateState = useSelector((state) => state.productUpdate.value);
+    const dispatch           = useDispatch();
 
     const [product, setProduct] = useState([]);
 
@@ -54,8 +54,9 @@ const ProductList = ({ navigation, menu, scaleValue, offsetValue, ScaleTransitio
                 dispatch(productUpdate(false));
             }
         }
-
+        
         LoadData();
+        
 
     }, [selectedCategory, productUpdateState])
 
@@ -95,7 +96,7 @@ const ProductList = ({ navigation, menu, scaleValue, offsetValue, ScaleTransitio
                 transform: [
                     { scale: scaleValue }, { translateX: offsetValue.x }, { translateY: offsetValue.y }
                 ],
-                borderRadius: menu ? 15 : 0
+                borderRadius: menu ? 15 : 0,
             }}
         >
             <SafeAreaView>
@@ -134,10 +135,11 @@ const ProductList = ({ navigation, menu, scaleValue, offsetValue, ScaleTransitio
                     keyExtractor={item => item._id}
                     style={{ height: "100%", marginTop: 20 }}
                     refreshing={false}
+                    onRefresh={() => {}}
                     renderRightActions={({ item }) => (
                         <SwipeableQuickActions style={{ alignItems: "center" }}>
                             <SwipeableQuickActionButton 
-                                onPress={() => {}} 
+                                onPress={() => navigation.navigate("Edit", { item: item })} 
                                 text="수정" 
                                 style={{ width: 60, height: 80, backgroundColor: "orange" }} textStyle={{ color: "white", fontWeight: "bold"}} 
                             />

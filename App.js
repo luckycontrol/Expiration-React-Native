@@ -8,6 +8,7 @@ import { Provider } from 'react-redux';
 import { store } from './store';
 import Main from './screens/main/Main';
 import Add from './screens/main/add/Add';
+import Edit from './screens/main/edit/Edit';
 
 export default function App() {
 
@@ -30,8 +31,9 @@ export default function App() {
               { headerShown: false }
             }
           >
-          <Stack.Screen name="List" component={Main} />
+          <Stack.Screen name="Main" component={Main} />
           <Stack.Screen name="Add" component={Add} />
+          <Stack.Screen name="Edit" component={Edit} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>
