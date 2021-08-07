@@ -7,6 +7,8 @@ import { useDispatch } from 'react-redux';
 import url from '../../api/url';
 import * as Haptics from "expo-haptics"
 
+import db, { saveLoginStatus } from '../../sqlite/sqlite';
+
 const Login = ({ navigation }) => {
 
     const dispatch = useDispatch();
@@ -45,6 +47,7 @@ const Login = ({ navigation }) => {
         } else {
             Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
             dispatch(LOGIN_REDUCER(login));
+            saveLoginStatus(db, { email: login.email, name: login.name });
         }
     }
 

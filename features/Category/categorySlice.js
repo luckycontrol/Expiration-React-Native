@@ -33,6 +33,10 @@ export const categorySlice = createSlice({
             } else {
                 state.value = ""
             }
+        },
+
+        resetCategoryList: (state, action) => {
+            state.categoryList = [];
         }
     }
 });
@@ -42,7 +46,8 @@ export const {
     setCategoryList,
     createCategory,
     deleteCategory,
-    resetCategory
+    resetCategory,
+    resetCategoryList
 } = categorySlice.actions;
 
 export default categorySlice.reducer;

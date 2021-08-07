@@ -97,7 +97,7 @@ const Add = ({ navigation, route }) => {
             <View style={{ margin: 30 }}>
                 <View style={{ marginBottom: 30,  }} >
                     <TouchableOpacity
-                        onPress={() => { navigation.goBack() }}
+                        onPress={() => { navigation.goBack(); }}
                     >
                         <Image source={require("../../../assets/left-chevron.png" )} style={{ width: 20, height: 20 }} />
                     </TouchableOpacity>

@@ -9,6 +9,9 @@ import * as Haptics from "expo-haptics"
 import url from "../../../api/url"
 
 import { logout as LOGOUT_REDUCER } from '../../../features/Account/accountSlice'
+import { resetCategoryList as RESET_CATEGORY_LIST_REDUCER } from '../../../features/Category/categorySlice'
+
+import db, { saveLogoutStatus } from '../../../sqlite/sqlite'
 
 const Menu = ({ ScaleTransitionEffect, setCreateCategory }) => {
 
@@ -89,6 +92,8 @@ const Menu = ({ ScaleTransitionEffect, setCreateCategory }) => {
                     text: "로그아웃",
                     onPress: () => {
                         dispatch(LOGOUT_REDUCER());
+                        dispatch(RESET_CATEGORY_LIST_REDUCER([]));
+                        saveLogoutStatus(db);
                     }
                     
                 },

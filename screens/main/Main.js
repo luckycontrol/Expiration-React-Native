@@ -26,6 +26,7 @@ import { Alert } from 'react-native'
 const Main = ({ navigation }) => {
 
     const login = useSelector((state) => state.account.info);
+    const category = useSelector((state) => state.category.categoryList);
 
     const [menu, setMenu] = useState(false);
 
@@ -111,7 +112,6 @@ const Main = ({ navigation }) => {
         }
 
         handleLocalNotification();
-
         handleGetCategoryList();
     }, [])
 
