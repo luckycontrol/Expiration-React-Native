@@ -1,11 +1,12 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { 
     View, 
     Text,
     SafeAreaView,
     TouchableOpacity,
     Image,
-    TextInput
+    TextInput,
+    Alert
 } from 'react-native'
 import DatePicker from "@react-native-community/datetimepicker"
 import * as ImagePicker from "expo-image-picker"
@@ -24,6 +25,19 @@ const Edit = ({ route, navigation }) => {
     const [image, setImage]             = useState(item.image);
 
     const dispatch = useDispatch();
+
+    const pickImage = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1
+        });
+
+        if (!result.cancelled) {
+            setImage(result.uri);
+        }
+    }
 
     const dateHandler = (event, selectedDate) => {
         const date = selectedDate || expiration;
@@ -57,6 +71,13 @@ const Edit = ({ route, navigation }) => {
         navigation.goBack();
     }
 
+    useEffect(() => {
+        if (route.params.image) {
+            setImage(route.params.image);
+        }
+
+    }, [route.params])
+
     return (
         <SafeAreaView style={{ height: "100%", justifyContent: "space-between" }} >
             <View style={{ margin: 30 }}>
@@ -70,8 +91,33 @@ const Edit = ({ route, navigation }) => {
 
                 <TouchableOpacity
                     onPress={() => {
-                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-                        
+                        Alert.alert(
+                            `${item.type} 이미지 수정`,
+                            "어떤 방식으로 이미지를 수정하실건가요?",
+                            [
+                                {
+                                    text: "카메라로 촬영",
+                                    onPress: () => {
+                                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+                                        navigation.navigate("Camera", {
+                                            path: "Edit",
+                                            item: item
+                                        })
+                                    }
+                                },
+                                {
+                                    text: "앨범에서 선택",
+                                    onPress: () => {
+                                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+                                        pickImage();
+                                    }
+                                },
+                                {
+                                    text: "취소",
+                                    style: "destructive"
+                                }
+                            ]
+                        )
                     }}
                 >
                     <View

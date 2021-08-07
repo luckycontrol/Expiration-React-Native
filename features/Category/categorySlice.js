@@ -1,8 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    value: "음식",
-    categoryList: ["음식", "생활용품"],
+    value: "",
+    categoryList: [],
 }
 
 export const categorySlice = createSlice({

@@ -24,6 +24,7 @@ import url from '../../../api/url'
 
 const ProductList = ({ navigation, menu, scaleValue, offsetValue, ScaleTransitionEffect }) => {
 
+    const login              = useSelector((state) => state.account.info);
     const selectedCategory   = useSelector((state) => state.category.value);
     const productUpdateState = useSelector((state) => state.productUpdate.value);
     const dispatch           = useDispatch();
@@ -41,7 +42,7 @@ const ProductList = ({ navigation, menu, scaleValue, offsetValue, ScaleTransitio
                 body: JSON.stringify({
                     query: GET_PRODUCT,
                     variables: {
-                        email   : "cho",
+                        email   : login.email,
                         type    : selectedCategory
                     }
                 })
@@ -70,7 +71,7 @@ const ProductList = ({ navigation, menu, scaleValue, offsetValue, ScaleTransitio
             body: JSON.stringify({
                 query: DELETE_PRODUCT,
                 variables: {
-                    email   : "cho",
+                    email   : login.email,
                     _id     : productId
                 }
             })

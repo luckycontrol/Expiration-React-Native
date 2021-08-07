@@ -8,8 +8,11 @@ import { deleteManyProducts as DELETE_MANY_PRODUCTS } from '../../../api/product
 import * as Haptics from "expo-haptics"
 import url from "../../../api/url"
 
+import { logout as LOGOUT_REDUCER } from '../../../features/Account/accountSlice'
+
 const Menu = ({ ScaleTransitionEffect, setCreateCategory }) => {
 
+    const login             = useSelector((state) => state.account.info)
     const selectedCategory  = useSelector((state) => state.category.value);
     const categoryList      = useSelector((state) => state.category.categoryList);
     const dispatch          = useDispatch();
@@ -26,7 +29,7 @@ const Menu = ({ ScaleTransitionEffect, setCreateCategory }) => {
             body: JSON.stringify({
                 query: DELETE_CATEGORY,
                 variables: {
-                    email       : "cho",
+                    email       : login.email,
                     categoryName: categoryName
                 }
             })
@@ -49,7 +52,7 @@ const Menu = ({ ScaleTransitionEffect, setCreateCategory }) => {
             body: JSON.stringify({
                 query: DELETE_MANY_PRODUCTS,
                 variables: {
-                    email: "cho",
+                    email: login.email,
                     categoryName: categoryName
                 }
             })
@@ -77,6 +80,25 @@ const Menu = ({ ScaleTransitionEffect, setCreateCategory }) => {
         )
     )
 
+    function handleLogout() {
+        Alert.alert(
+            "로그아웃 하시겠어요?",
+            "",
+            [
+                {
+                    text: "로그아웃",
+                    onPress: () => {
+                        dispatch(LOGOUT_REDUCER());
+                    }
+                    
+                },
+                {
+                    text: "취소"
+                }
+            ]
+        )
+    }
+
     return (
         <SafeAreaView
             style={{
@@ -97,7 +119,7 @@ const Menu = ({ ScaleTransitionEffect, setCreateCategory }) => {
                 />
             </TouchableOpacity>
 
-            <Text style={tw`m-5 text-white text-2xl font-bold`}>회원님, 안녕하세요.</Text>
+            <Text style={tw`m-5 text-white text-2xl font-bold`}>{login.name}님, 안녕하세요.</Text>
 
             <ScrollView>
                 <View style={tw`m-5`}>
@@ -161,7 +183,7 @@ const Menu = ({ ScaleTransitionEffect, setCreateCategory }) => {
                 </View>
 
                 <View style={tw`m-5`}>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={handleLogout} >
                         <Text style={tw`text-white font-bold text-base`}>로그아웃 </Text>
                     </TouchableOpacity>
                 </View>

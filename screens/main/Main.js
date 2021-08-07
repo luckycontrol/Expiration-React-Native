@@ -10,17 +10,22 @@ import {
 import ProductList from './list/ProductList'
 import Menu from './menu/Menu'
 import { 
-    createCategory as CREATE_CATEGORY_REDUCER,
-    setCategoryList as SET_CATEGORY_LIST
+    createCategory  as CREATE_CATEGORY_REDUCER,
+    setCategoryList as SET_CATEGORY_LIST,
+    setCategory     as SET_CATEGORY
 } from '../../features/Category/categorySlice'
 import { 
     createCategory as CREATE_CATEGORY, 
     getCategoryList as GET_CATEGORY_LIST 
 } from "../../api/category/categoryApi"
-import { useDispatch } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import url from '../../api/url'
+import * as Notifications from "expo-notifications"
+import { Alert } from 'react-native'
 
 const Main = ({ navigation }) => {
+
+    const login = useSelector((state) => state.account.info);
 
     const [menu, setMenu] = useState(false);
 
@@ -48,6 +53,37 @@ const Main = ({ navigation }) => {
         setMenu(!menu);
     }
 
+    Notifications.setNotificationHandler({
+        handleNotification: async () => ({
+            shouldShowAlert: true,
+            shouldPlaySound: true,
+            shouldSetBadge: false
+        })
+    })
+
+    async function registerForPushNotification() {
+        const { status } = await Notifications.getPermissionsAsync();
+
+        if (status !== "granted") {
+            alert("유통기한 알람을 거부하셨습니다!");
+            return;
+        }
+
+        Notifications.scheduleNotificationAsync(
+            {
+                title: "Example",
+                body: "테스트입니당."
+            },
+            {
+                repeat: "minute",
+                time: new Date().getTime() + 10000,
+            }
+        )
+
+        // let token = (await Notifications.getExpoPushTokenAsync()).data;
+        // return token
+    }
+
     useEffect(() => {
         const handleGetCategoryList = async () => {
             const result = await fetch(url, {
@@ -58,18 +94,42 @@ const Main = ({ navigation }) => {
                 },
                 body: JSON.stringify({
                     query: GET_CATEGORY_LIST,
-                    variables: { email: "cho" }
+                    variables: { email: login.email }
                 })
             });
 
             const { data: { getCategoryList } } = await result.json();
-            dispatch(SET_CATEGORY_LIST(getCategoryList))
+            dispatch(SET_CATEGORY_LIST(getCategoryList));
+            dispatch(SET_CATEGORY(getCategoryList[0].categoryName));
         }
+
+        const handleLocalNotification = async () => {
+            const { status } = await Notifications.getPermissionsAsync();
+
+            if (status !== "granted") { return }
+
+        }
+
+        handleLocalNotification();
 
         handleGetCategoryList();
     }, [])
 
     const handleCreateCategory = async () => {
+        if (newCategory === "") {
+            Alert.alert(
+                "카테고리 이름을 입력해주세요!",
+                "",
+                [
+                    {
+                        text: "알겠어요"
+                    }
+                ]
+            )
+
+            return;
+        }
+
         const result = await fetch(url, {
             method: "post",
             headers: {
@@ -79,7 +139,7 @@ const Main = ({ navigation }) => {
             body: JSON.stringify({
                 query: CREATE_CATEGORY,
                 variables: {
-                    email       : "cho",
+                    email       : login.email,
                     categoryName: newCategory
                 }
             })
@@ -87,6 +147,7 @@ const Main = ({ navigation }) => {
 
         const { data: { createCategory: { categoryName } } } = await result.json();
         dispatch(CREATE_CATEGORY_REDUCER(categoryName));
+        setCreateCategory(false);
     }
 
     return (
@@ -146,7 +207,6 @@ const Main = ({ navigation }) => {
                             }}
                             onPress={() => {
                                 handleCreateCategory();
-                                setCreateCategory(false);
                             }}
                         >
                             <Text style={{ fontWeight: "500", color: "white", fontSize: 18 }}>추가</Text>

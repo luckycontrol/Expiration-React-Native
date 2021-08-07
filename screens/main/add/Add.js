@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { 
     View,
     Text,
@@ -8,7 +8,8 @@ import {
     TextInput,
     KeyboardAvoidingView,
     Modal,
-    Platform
+    Platform,
+    Alert
 } from 'react-native'
 import DatePicker from "@react-native-community/datetimepicker"
 import { useSelector, useDispatch } from "react-redux"
@@ -18,8 +19,9 @@ import { createProduct } from '../../../api/product/productApi'
 import { productUpdate } from '../../../features/ProductUpdate/productUpdateSlice'
 import url from "../../../api/url"
 
-const Add = ({ navigation }) => {
+const Add = ({ navigation, route }) => {
 
+    const login             = useSelector((state) => state.account.info)
     const selectedCategory  = useSelector((state) => state.category.value);
     const dispatch          = useDispatch();
 
@@ -53,7 +55,7 @@ const Add = ({ navigation }) => {
             Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
             setShowModal(true);
         } else {
-            const result = await fetch(url, {
+            await fetch(url, {
                 method: "post",
                 headers: {
                     "Content-Type"  : "application/json",
@@ -62,7 +64,7 @@ const Add = ({ navigation }) => {
                 body: JSON.stringify({
                     query: createProduct,
                     variables: {
-                        email       : "cho",
+                        email       : login.email,
                         name        : name,
                         type        : selectedCategory,
                         image       : image,
@@ -71,7 +73,6 @@ const Add = ({ navigation }) => {
                 })
             });
 
-            const { data } = await result.json();
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
 
             // 데이터를 리스트에 추가하는 작업...
@@ -80,6 +81,12 @@ const Add = ({ navigation }) => {
             navigation.goBack();
         }
     }
+
+    useEffect(() => {
+        if (route.params) {
+            setImage(route.params.image);
+        }
+    }, [route.params])
 
     return (
         <SafeAreaView style={{ height: "100%", justifyContent: "space-between" }} >
@@ -100,8 +107,32 @@ const Add = ({ navigation }) => {
 
                 <TouchableOpacity
                     onPress={() => {
-                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-                        pickImage();
+                        Alert.alert(
+                            `${selectedCategory} 이미지 추가`,
+                            "어떤 방식으로 이미지를 추가하실건가요?",
+                            [
+                                {
+                                    text: "카메라로 촬영",
+                                    onPress: () => {
+                                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+                                        navigation.navigate("Camera", {
+                                            path: "Add"
+                                        })
+                                    }
+                                },
+                                {
+                                    text: "앨범에서 선택",
+                                    onPress: () => {
+                                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+                                        pickImage();
+                                    }
+                                },
+                                {
+                                    text: "취소",
+                                    style: "destructive"
+                                }
+                            ]
+                        )
                     }}
                 >
                     <View
@@ -177,6 +208,8 @@ const Add = ({ navigation }) => {
                 </TouchableOpacity>
             </View>
             </KeyboardAvoidingView>
+
+            {/* 입력 안한게 있을 경우 */}
             <Modal
                 visible={showModal}
                 transparent={true}
