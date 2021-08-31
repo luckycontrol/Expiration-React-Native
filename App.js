@@ -5,6 +5,7 @@ import Main from './screens/main/Main';
 import Add from './screens/main/add/Add';
 import Edit from './screens/main/edit/Edit';
 import CameraView from './screens/main/camera/CameraView';
+import { Settings, AddNewFeature, AlarmSetting, ChangePassword, RemoveAccount } from "./screens/main/settings"
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -54,13 +55,18 @@ function Root() {
                 login ? (
                     <Stack.Navigator
                         screenOptions={{
-                            headerShown: false
+                            headerShown: false,
                         }}
                     >
                         <Stack.Screen name="Main" component={Main} />
                         <Stack.Screen name="Add" component={Add} />
                         <Stack.Screen name="Edit" component={Edit} />
                         <Stack.Screen name="Camera" component={CameraView} />
+                        <Stack.Screen name="Settings" component={Settings} />
+                        <Stack.Screen name="AddNewFeature" component={AddNewFeature} />
+                        <Stack.Screen name="AlarmSetting" component={AlarmSetting} />
+                        <Stack.Screen name="ChangePassword" component={ChangePassword} />
+                        <Stack.Screen name="RemoveAccount" component={RemoveAccount} />
                     </Stack.Navigator>
                 ) : (
                     <Stack.Navigator

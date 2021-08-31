@@ -30,7 +30,8 @@
         "NSMicrophoneUsageDescription": "유통기한 관리사에서 마이크를 사용합니다.",
         "NSPhotoLibraryAddUsageDescription": "",
         "NSPhotoLibraryUsageDescription": ""
-      }
+      },
+      "bundleIdentifier": "com.luckycontrol.Expiration"
     },
     "android": {
       "adaptiveIcon": {

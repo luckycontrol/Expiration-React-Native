@@ -13,7 +13,7 @@ import { resetCategoryList as RESET_CATEGORY_LIST_REDUCER } from '../../../featu
 
 import db, { saveLogoutStatus } from '../../../sqlite/sqlite'
 
-const Menu = ({ ScaleTransitionEffect, setCreateCategory }) => {
+const Menu = ({ navigation, ScaleTransitionEffect, setCreateCategory }) => {
 
     const login             = useSelector((state) => state.account.info)
     const selectedCategory  = useSelector((state) => state.category.value);
@@ -104,6 +104,12 @@ const Menu = ({ ScaleTransitionEffect, setCreateCategory }) => {
         )
     }
 
+    function handleClickSettingsBtn() {
+        ScaleTransitionEffect()
+
+        navigation.push("Settings");
+    }
+
     return (
         <SafeAreaView
             style={{
@@ -188,6 +194,14 @@ const Menu = ({ ScaleTransitionEffect, setCreateCategory }) => {
                 </View>
 
                 <View style={tw`m-5`}>
+                    <TouchableOpacity
+                        onPress={() => {
+                            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                            handleClickSettingsBtn();
+                        }}
+                    >
+                        <Text style={{ color: "white", fontWeight: "bold", marginBottom: 10 }} >설정</Text>
+                    </TouchableOpacity>
                     <TouchableOpacity onPress={handleLogout} >
                         <Text style={tw`text-white font-bold text-base`}>로그아웃 </Text>
                     </TouchableOpacity>

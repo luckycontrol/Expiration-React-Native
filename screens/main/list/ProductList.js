@@ -103,32 +103,38 @@ const ProductList = ({ navigation, menu, scaleValue, offsetValue, ScaleTransitio
             <SafeAreaView>
                 <View
                     style={{
-                        flexDirection: "row",
-                        justifyContent: "space-between",
                         alignItems: "center",
                         marginHorizontal: 30,
-                        marginTop: menu ? 30 : 0
+                        marginVertical: menu ? 30 : 10
                     }}
                 >
                     <TouchableOpacity
                         onPress={() => {
-                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                        ScaleTransitionEffect();
+                            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                            ScaleTransitionEffect();
                         }}
+
+                        style={{ position: "absolute", left: 0 }}
                     >
                         <Image source={require("../../../assets/menu.png")} style={{ width: 25, height: 25 }} />
                     </TouchableOpacity>
 
                     <Text style={{ fontSize: 24, fontWeight: "500" }}>{selectedCategory}</Text>
 
-                    <TouchableOpacity
-                        onPress={() => {
-                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                        navigation.navigate("Add");
-                        }}
-                    >
-                        <Image source={require("../../../assets/plus.png")} style={{ width: 20, height: 20 }} />
-                    </TouchableOpacity>
+                    <View style={{ position: "absolute", right: 0, flexDirection: "row", alignItems: "center" }} >
+                        <TouchableOpacity>
+                            <Image source={require("../../../assets/question-mark.png")} style={{ width: 17, height: 17, marginRight: 20 }} />
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                            onPress={() => {
+                            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                            navigation.navigate("Add");
+                            }}
+                        >
+                            <Image source={require("../../../assets/plus.png")} style={{ width: 20, height: 20 }} />
+                        </TouchableOpacity>
+                    </View>
                 </View>
                 <SwipeableFlatList 
                     data={product}

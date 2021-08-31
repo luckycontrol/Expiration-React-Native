@@ -152,7 +152,7 @@ const Main = ({ navigation }) => {
 
     return (
         <View>
-            <Menu ScaleTransitionEffect={ScaleTransitionEffect} setCreateCategory={setCreateCategory} />
+            <Menu navigation={navigation} ScaleTransitionEffect={ScaleTransitionEffect} setCreateCategory={setCreateCategory} />
             <ProductList navigation={navigation} menu={menu} setMenu={setMenu} scaleValue={scaleValue} offsetValue={offsetValue} ScaleTransitionEffect={ScaleTransitionEffect} />
 
             {/* 카테고리 추가 모달 */}

@@ -1,3 +1,3 @@
-const url = "http://192.168.1.3:3000/graphql";
+const url = "https://expiration-server.herokuapp.com/graphql";
 
 export default url;
