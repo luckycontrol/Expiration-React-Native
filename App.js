@@ -4,7 +4,7 @@ import CreateAccount from './screens/account/CreateAccount';
 import Main from './screens/main/Main';
 import Add from './screens/main/add/Add';
 import Edit from './screens/main/edit/Edit';
-import CameraView from './screens/main/camera/CameraView';
+import { CameraView, BarCodeScannerView } from './screens/main/camera';
 import { Settings, AddNewFeature, AlarmSetting, ChangePassword, RemoveAccount } from "./screens/main/settings"
 
 import { NavigationContainer } from '@react-navigation/native';
@@ -67,6 +67,7 @@ function Root() {
                         <Stack.Screen name="AlarmSetting" component={AlarmSetting} />
                         <Stack.Screen name="ChangePassword" component={ChangePassword} />
                         <Stack.Screen name="RemoveAccount" component={RemoveAccount} />
+                        <Stack.Screen name="BarCodeScannerView" component={BarCodeScannerView} />
                     </Stack.Navigator>
                 ) : (
                     <Stack.Navigator

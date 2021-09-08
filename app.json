@@ -4,9 +4,9 @@
     "slug": "Expiration",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/icon/appstore.png",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/icon/appstore.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -28,8 +28,12 @@
         },
         "NSCameraUsageDescription": "유통기한 관리사에서 카메라를 사용합니다.",
         "NSMicrophoneUsageDescription": "유통기한 관리사에서 마이크를 사용합니다.",
-        "NSPhotoLibraryAddUsageDescription": "",
-        "NSPhotoLibraryUsageDescription": ""
+        "NSPhotoLibraryAddUsageDescription": "유통기한 관리사에서 앨범을 사용합니다.",
+        "NSPhotoLibraryUsageDescription": "유통기한 관리사에서 앨범을 사용합니다.",
+        "UIBackgroundModes": [
+          "location",
+          "fetch"
+        ]
       },
       "bundleIdentifier": "com.luckycontrol.Expiration"
     },
@@ -41,6 +45,7 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "description": ""
   }
 }

@@ -5,7 +5,9 @@ import {
     Animated, 
     Modal, 
     TextInput, 
-    TouchableOpacity 
+    TouchableOpacity,
+    Platform,
+    Alert
 } from 'react-native'
 import ProductList from './list/ProductList'
 import Menu from './menu/Menu'
@@ -21,7 +23,42 @@ import {
 import { useSelector, useDispatch } from 'react-redux'
 import url from '../../api/url'
 import * as Notifications from "expo-notifications"
-import { Alert } from 'react-native'
+import db, { createTokenTable, saveToken, getToken } from "../../sqlite/sqlite"
+import * as TaskManager from "expo-task-manager"
+import { BACKGROUND_FETCH_TASK } from "../../features/BackgroundTask/BackgroundTaskManager"
+
+Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+        shouldShowAlert: true,
+        shouldPlaySound: true,
+        shouldSetBadge: false
+    })
+})
+
+TaskManager.defineTask(BACKGROUND_FETCH_TASK, async () => {
+
+    const login = useSelector((state) => state.account.info);
+
+    const getTokenResult = await getToken();
+    const token = getTokenResult[0].token;
+    const url = "http://192.168.1.3:3000/expoServer"
+
+    const notificationResult = await fetch(url, {
+        method: "post",
+        headers: {
+            "content-type": "application/json",
+            "accept": "application/json"
+        },
+        body: JSON.stringify({
+            email: login.email,
+            token: token
+        })
+    });
+
+    const { result } = await notificationResult.json();
+
+    console.log(result);
+})
 
 const Main = ({ navigation }) => {
 
@@ -54,37 +91,6 @@ const Main = ({ navigation }) => {
         setMenu(!menu);
     }
 
-    Notifications.setNotificationHandler({
-        handleNotification: async () => ({
-            shouldShowAlert: true,
-            shouldPlaySound: true,
-            shouldSetBadge: false
-        })
-    })
-
-    async function registerForPushNotification() {
-        const { status } = await Notifications.getPermissionsAsync();
-
-        if (status !== "granted") {
-            alert("유통기한 알람을 거부하셨습니다!");
-            return;
-        }
-
-        Notifications.scheduleNotificationAsync(
-            {
-                title: "Example",
-                body: "테스트입니당."
-            },
-            {
-                repeat: "minute",
-                time: new Date().getTime() + 10000,
-            }
-        )
-
-        // let token = (await Notifications.getExpoPushTokenAsync()).data;
-        // return token
-    }
-
     useEffect(() => {
         const handleGetCategoryList = async () => {
             const result = await fetch(url, {
@@ -104,15 +110,28 @@ const Main = ({ navigation }) => {
             dispatch(SET_CATEGORY(getCategoryList[0].categoryName));
         }
 
-        const handleLocalNotification = async () => {
+        const handleNotification = async () => {
             const { status } = await Notifications.getPermissionsAsync();
 
             if (status !== "granted") { return }
 
+            let token = (await Notifications.getExpoPushTokenAsync()).data;
+
+            if (Platform.OS === "android") {
+                Notifications.setNotificationChannelAsync("default", {
+                    name: "default",
+                    importance: Notifications.AndroidImportance.MAX,
+                    vibrationPattern: [0, 250, 250, 250],
+                    lightColor: "#FF231F7C"
+                });
+            }
+
+            createTokenTable(db);
+            saveToken(db, token);
         }
 
-        handleLocalNotification();
         handleGetCategoryList();
+        handleNotification();
     }, [])
 
     const handleCreateCategory = async () => {

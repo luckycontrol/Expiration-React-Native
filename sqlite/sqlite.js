@@ -32,6 +32,38 @@ export function saveLogoutStatus(db) {
     });
 }
 
+export function createTokenTable(db) {
+    db.transaction(tx => {
+        tx.executeSql("create table if not exists tokenTable ( id integer primary key not null, token text );");
+    });
+}
+
+export function saveToken(db, token) {
+    db.transaction(tx => {
+        tx.executeSql("select * from tokenTable where id = 1", [], (_, { rows: { _array }}) => {
+            if (_array.length <= 0) {
+                tx.executeSql("insert into tokenTable (token) values (?);", [token]);
+            } else {
+                tx.executeSql("update tokenTable set token = ? where id = 1;", [token]);
+            }
+        });
+    });
+}
+
 const db = openDatabase();
+
+let getTokenPromise = new Promise((resolve, reject) => {
+    db.transaction(tx => {
+        tx.executeSql("select * from tokenTable where id = 1", [], (_, { rows: { _array }}) => {
+            resolve(_array);
+        })
+    })
+})
+
+export async function getToken() {
+    let result = await getTokenPromise;
+
+    return result;
+}
 
 export default db;

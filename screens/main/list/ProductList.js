@@ -51,7 +51,7 @@ const ProductList = ({ navigation, menu, scaleValue, offsetValue, ScaleTransitio
             const { data: { getProducts } } = await result.json();
             setProduct(getProducts);
             
-            if (productUpdateState == true) {
+            if (productUpdateState === true) {
                 dispatch(productUpdate(false));
             }
         }
