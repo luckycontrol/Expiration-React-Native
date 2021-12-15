@@ -16,12 +16,8 @@ import {
     setCategoryList as SET_CATEGORY_LIST,
     setCategory     as SET_CATEGORY
 } from '../../features/Category/categorySlice'
-import { 
-    createCategory as CREATE_CATEGORY, 
-    getCategoryList as GET_CATEGORY_LIST 
-} from "../../api/category/categoryApi"
+import { categoryAPI } from "../../api"
 import { useSelector, useDispatch } from 'react-redux'
-import url from '../../api/url'
 import * as Notifications from "expo-notifications"
 import db, { createTokenTable, saveToken, getToken } from "../../sqlite/sqlite"
 import * as TaskManager from "expo-task-manager"
@@ -93,19 +89,8 @@ const Main = ({ navigation }) => {
 
     useEffect(() => {
         const handleGetCategoryList = async () => {
-            const result = await fetch(url, {
-                method: "post",
-                headers: {
-                    "content-type"  : "application/json",
-                    "accept"        : "application/json"
-                },
-                body: JSON.stringify({
-                    query: GET_CATEGORY_LIST,
-                    variables: { email: login.email }
-                })
-            });
+            const { data: { data: { getCategoryList }}} = await categoryAPI.getCategoryList(login.email)
 
-            const { data: { getCategoryList } } = await result.json();
             dispatch(SET_CATEGORY_LIST(getCategoryList));
             dispatch(SET_CATEGORY(getCategoryList[0].categoryName));
         }
@@ -149,28 +134,14 @@ const Main = ({ navigation }) => {
             return;
         }
 
-        const result = await fetch(url, {
-            method: "post",
-            headers: {
-                "content-type"  : "application/json",
-                "accept"        : "application/json"
-            },
-            body: JSON.stringify({
-                query: CREATE_CATEGORY,
-                variables: {
-                    email       : login.email,
-                    categoryName: newCategory
-                }
-            })
-        });
+        const { data: { data: { createCategory: { categoryName }}}} = await categoryAPI.createCateogry(login.email, newCategory)
 
-        const { data: { createCategory: { categoryName } } } = await result.json();
         dispatch(CREATE_CATEGORY_REDUCER(categoryName));
         setCreateCategory(false);
     }
 
     return (
-        <View>
+        <>
             <Menu navigation={navigation} ScaleTransitionEffect={ScaleTransitionEffect} setCreateCategory={setCreateCategory} />
             <ProductList navigation={navigation} menu={menu} setMenu={setMenu} scaleValue={scaleValue} offsetValue={offsetValue} ScaleTransitionEffect={ScaleTransitionEffect} />
 
@@ -233,7 +204,7 @@ const Main = ({ navigation }) => {
                     </View>
                 </View>
             </Modal>
-        </View>
+        </>
     )
 }
 

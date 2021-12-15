@@ -1,16 +1,15 @@
 import React, { useState } from 'react'
+import { Input, Pressable } from "native-base"
+
 import { 
     Alert, 
-    Pressable,
     SafeAreaView, 
-    Text, 
-    TextInput, 
+    Text,
     View,
     TouchableOpacity,
     Image,
 } from 'react-native'
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
-import tw from "tailwind-react-native-classnames"
 import url from '../../api/url'
 import { 
     CHECK_DUPLICATE,
@@ -138,39 +137,44 @@ const CreateAccount = ({ navigation }) => {
     }
 
     return (
-        <SafeAreaView style={tw`w-full h-full justify-between`}>
+        <SafeAreaView style={{ width: "100%", height: "100%", justifyContent: "space-between"}}>
             <KeyboardAwareScrollView >
-                <TouchableOpacity style={tw`mx-5 my-3`} onPress={() => navigation.goBack()} >
+                <TouchableOpacity style={{ marginHorizontal: 20, marginVertical: 15 }} onPress={() => navigation.goBack()} >
                     <Image style={{ width: 20, height: 20 }} source={require("../../assets/left-chevron.png")} />
                 </TouchableOpacity>
 
-                <Text style={tw`m-5 text-3xl font-bold`}>회원가입</Text>
+                <Text style={{ margin: 20, fontSize: 32, fontWeight: "bold" }} >회원가입</Text>
 
-                <View style={tw`m-5`}>
-                    <Text style={tw`text-base text-base font-medium`}>이메일</Text>
-                    <TextInput style={tw`h-14 rounded-xl mt-3 p-2 bg-gray-200 border border-gray-200 shadow-sm`} onChangeText={setEmail} />
-                </View>
-
-                <View style={tw`m-5`}>
-                    <Text style={tw`text-base text-base font-medium`}>이름 / 닉네임</Text>
-                    <TextInput style={tw`h-14 rounded-xl mt-3 p-2 bg-gray-200 border border-gray-200 shadow-sm`} onChangeText={setName} />
-                </View>
-
-                <View style={tw`m-5`}>
-                    <Text style={tw`text-base text-base font-medium`}>비밀번호</Text>
-                    <TextInput
-                        style={tw`h-14 rounded-xl mt-3 p-2 bg-gray-200 border border-gray-200 shadow-sm`}
-                        secureTextEntry={true}
-                        onChangeText={setPassword}
+                <View style={{ margin: 20 }}>
+                    <Text style={{ fontWeight: "bold" }}>이메일</Text>
+                    <Input height={55} rounded="xl" mt="3" p="2" bg="gray.200" shadow={0.5} borderColor="gray.200" fontSize="md"
+                        onChangeText={setEmail} 
+                        autoCapitalize="none" 
                     />
                 </View>
 
-            <Pressable 
-                style={tw`mx-5 flex justify-center items-center h-14 bg-black rounded-xl shadow-md my-20`}
-                onPress={CreateAccount}
-            >
-                <Text style={tw`text-white text-xl font-medium`}>회원가입</Text>
-            </Pressable>
+                <View style={{ margin: 20 }}>
+                    <Text style={{ fontWeight: "bold" }}>이름 / 닉네임</Text>
+                    <Input height={55} rounded="xl" mt="3" p="2" bg="gray.200" shadow={0.5} borderColor="gray.200" fontSize="md"
+                        onChangeText={setName} 
+                        autoCapitalize="none" 
+                    />
+                </View>
+
+                <View style={{ margin: 20 }}>
+                    <Text style={{ fontWeight: "bold" }}>비2밀번호</Text>
+                    <Input height={55} rounded="xl" mt="3" p="2" bg="gray.200" shadow={0.5} borderColor="gray.200" fontSize="md"
+                        onChangeText={setPassword} 
+                        secureTextEntry={true}
+                        autoCapitalize="none"
+                    />
+                </View>
+
+                <Pressable m="5" justifyContent="center" alignItems="center" h={55} bg="black" rounded="xl" shadow="1"
+                    onPress={CreateAccount}
+                >
+                    <Text style={{ fontWeight: "bold", fontSize: 16, color: "white" }}>회원가입</Text>
+                </Pressable>
             </KeyboardAwareScrollView>
         </SafeAreaView>
     )

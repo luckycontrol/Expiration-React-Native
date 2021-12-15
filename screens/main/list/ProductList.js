@@ -7,21 +7,15 @@ import {
   Text,
   Animated,
 } from 'react-native'
-import {
-    SwipeableFlatList,
-    SwipeableQuickActions,
-    SwipeableQuickActionButton 
-} from 'react-native-swipe-list' 
+import { FlatList, Center } from "native-base"
+import { AnimatePresence } from "moti"
 import { useSelector, useDispatch } from "react-redux"
 import * as Haptics from "expo-haptics"
 import ListCard from "./ListCard"
-import { 
-    getProducts     as GET_PRODUCT,
-    deleteProduct   as DELETE_PRODUCT,
-} from '../../../api/product/productApi'
+import { productAPI } from '../../../api'
 import { productUpdate } from '../../../features/ProductUpdate/productUpdateSlice'
-import url from '../../../api/url'
-
+import Loading from '../../loading/Loading'
+ 
 const ProductList = ({ navigation, menu, scaleValue, offsetValue, ScaleTransitionEffect }) => {
 
     const login              = useSelector((state) => state.account.info);
@@ -30,55 +24,31 @@ const ProductList = ({ navigation, menu, scaleValue, offsetValue, ScaleTransitio
     const dispatch           = useDispatch();
 
     const [product, setProduct] = useState([]);
+    const [loading, setLoading] = useState(false)
 
     useEffect(() => {
+        // 서버에서 저장된 품목 로드
         const LoadData = async () => {
-            const result = await fetch(url, {
-                method: "post",
-                headers: {
-                    "content-type"  : "application/json",
-                    "accept"        : "application/json"
-                },
-                body: JSON.stringify({
-                    query: GET_PRODUCT,
-                    variables: {
-                        email   : login.email,
-                        type    : selectedCategory
-                    }
-                })
-            })
+            setLoading(true)
 
-            const { data: { getProducts } } = await result.json();
+            const {data: {data: {getProducts}}} = await productAPI.getProducts(login, selectedCategory)
             setProduct(getProducts);
             
             if (productUpdateState === true) {
                 dispatch(productUpdate(false));
             }
+
+            setLoading(false)
         }
         
         LoadData();
         
-
     }, [selectedCategory, productUpdateState])
 
+    // 저장된 품목 삭제
     const deleteProduct = async (productId) => {
-        const result = await fetch(url, {
-            method: "post",
-            headers: {
-                "content-type"  : "application/json",
-                "accept"        : "application/json"
-            },
-            body: JSON.stringify({
-                query: DELETE_PRODUCT,
-                variables: {
-                    email   : login.email,
-                    _id     : productId
-                }
-            })
-        });
+        const {data: {data: {deleteProduct: {_id}}}} = await productAPI.deleteProduct(login, productId)
 
-        const { data: { deleteProduct: { _id } } } = await result.json();
-        
         if (!_id) {
             const newProduct = product.filter((product) => product._id !== productId);
             setProduct(newProduct);
@@ -101,6 +71,7 @@ const ProductList = ({ navigation, menu, scaleValue, offsetValue, ScaleTransitio
             }}
         >
             <SafeAreaView>
+                {/* 상단 */}
                 <View
                     style={{
                         alignItems: "center",
@@ -108,6 +79,7 @@ const ProductList = ({ navigation, menu, scaleValue, offsetValue, ScaleTransitio
                         marginVertical: menu ? 30 : 10
                     }}
                 >
+                    {/* 메뉴 버튼 */}
                     <TouchableOpacity
                         onPress={() => {
                             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -119,8 +91,10 @@ const ProductList = ({ navigation, menu, scaleValue, offsetValue, ScaleTransitio
                         <Image source={require("../../../assets/menu.png")} style={{ width: 25, height: 25 }} />
                     </TouchableOpacity>
 
-                    <Text style={{ fontSize: 24, fontWeight: "500" }}>{selectedCategory}</Text>
+                    {/* 선택된 카테고리 이름 */}
+                    <Text style={{ fontSize: 24, fontWeight: "bold" }}>{selectedCategory}</Text>
 
+                    {/* 도움말 버튼, 추가 버튼 */}
                     <View style={{ position: "absolute", right: 0, flexDirection: "row", alignItems: "center" }} >
                         <TouchableOpacity>
                             <Image source={require("../../../assets/question-mark.png")} style={{ width: 17, height: 17, marginRight: 20 }} />
@@ -136,28 +110,36 @@ const ProductList = ({ navigation, menu, scaleValue, offsetValue, ScaleTransitio
                         </TouchableOpacity>
                     </View>
                 </View>
-                <SwipeableFlatList 
-                    data={product}
-                    renderItem={ListCard}
-                    keyExtractor={item => item._id}
-                    style={{ height: "100%", marginTop: 20 }}
-                    refreshing={false}
-                    onRefresh={() => {}}
-                    renderRightActions={({ item }) => (
-                        <SwipeableQuickActions style={{ alignItems: "center" }}>
-                            <SwipeableQuickActionButton 
-                                onPress={() => navigation.navigate("Edit", { item: item })} 
-                                text="수정" 
-                                style={{ width: 60, height: 80, backgroundColor: "orange" }} textStyle={{ color: "white", fontWeight: "bold"}} 
+
+                {/* 저장된 품목들을 출력할 리스트 */}
+                {
+                    loading && (
+                        <Loading />
+                    )
+                }
+                {
+                    !loading && (
+                        <AnimatePresence>
+                            <FlatList 
+                                data={product}
+                                renderItem={({item}) => (
+                                    <ListCard 
+                                        navigation={navigation} 
+                                        item={item} 
+                                        deleteProduct={deleteProduct} 
+                                    />
+                                )}
                             />
-                            <SwipeableQuickActionButton 
-                                onPress={() => deleteProduct(item._id)} 
-                                text="삭제" 
-                                style={{ width: 60, height: 80, backgroundColor: "red" }} textStyle={{ color: "white", fontWeight: "bold"}} 
-                            />
-                        </SwipeableQuickActions>
-                    )}
-                />
+                        </AnimatePresence>
+                    )
+                }
+                {
+                    !loading && product.length === 0 && (
+                        <Center h="full" pb={100}>
+                            <Text style={{ fontSize: 24, fontWeight: "bold" }}>아무것도 없어요..!</Text>
+                        </Center>
+                    )
+                }
             </SafeAreaView>
         </Animated.View>
     )

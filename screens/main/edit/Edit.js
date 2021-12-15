@@ -11,13 +11,14 @@ import {
 import DatePicker from "@react-native-community/datetimepicker"
 import * as ImagePicker from "expo-image-picker"
 import * as Haptics from "expo-haptics"
-import { updateProduct as UPDATE_PRODUCT } from '../../../api/product/productApi'
+import { productAPI } from '../../../api'
 import { productUpdate } from '../../../features/ProductUpdate/productUpdateSlice'
-import { useDispatch } from "react-redux"
-import url from '../../../api/url'
+import { useSelector, useDispatch } from "react-redux"
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
 
 const Edit = ({ route, navigation }) => {
+
+    const login = useSelector((state) => state.account.info)
 
     const { item } = route.params;
 
@@ -48,24 +49,7 @@ const Edit = ({ route, navigation }) => {
 
     const handleUpdateProduct = async () => {
 
-        await fetch(url, {
-            method: "post",
-            headers: {
-                "content-type"  : "application/json",
-                "accept"        : "application/json"
-            },
-            body: JSON.stringify({
-                query: UPDATE_PRODUCT,
-                variables: {
-                    _id         : item._id,
-                    email       : "cho",
-                    name        : name,
-                    type        : item.type,
-                    image       : image,
-                    expiration  : expiration
-                }
-            })
-        });
+        await productAPI.updateProduct(item, login.email, name, image, expiration)
 
         dispatch(productUpdate(true));
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);

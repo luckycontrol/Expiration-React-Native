@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
-import { View, Text, SafeAreaView, TextInput, Pressable, Button, Alert } from 'react-native'
-import tw from "tailwind-react-native-classnames";
+import { Input, Pressable } from "native-base"
+
+import { View, Text, SafeAreaView, Alert } from 'react-native'
 import { LOGIN } from '../../api/account/accountApi';
 import { login as LOGIN_REDUCER } from '../../features/Account/accountSlice';
 import { useDispatch } from 'react-redux';
@@ -52,36 +53,39 @@ const Login = ({ navigation }) => {
     }
 
     return (
-        <SafeAreaView style={tw`w-full h-full justify-between`}>
+        <SafeAreaView style={{ width: "100%", height: "100%", justifyContent: "space-between" }}>
             <View>
-                <Text style={tw`m-5 text-3xl font-bold`}>로그인</Text>
+                <Text style={{ margin: 20, fontSize: 36, fontWeight: "bold" }}>유통기한 관리사</Text>
 
-                <View style={tw`m-5`}>
-                    <Text style={tw`text-base text-base font-medium`}>이메일</Text>
-                    <TextInput style={tw`h-14 rounded-xl mt-3 p-2 bg-gray-200 border border-gray-200 shadow-sm`} onChangeText={setEmail} />
-                </View>
-
-                <View style={tw`m-5`}>
-                    <Text style={tw`text-base text-base font-medium`}>비밀번호</Text>
-                    <TextInput
-                        style={tw`h-14 rounded-xl mt-3 p-2 bg-gray-200 border border-gray-200 shadow-sm`}
-                        secureTextEntry={true} 
-                        onChangeText={setPassword}
+                <View style={{ margin: 20 }}>
+                    <Text style={{ fontWeight: "bold" }}>이메일</Text>
+                    <Input height={55} rounded="xl" mt="3" p="2" bg="gray.200" shadow={0.5} borderColor="gray.200" fontSize="md"
+                        onChangeText={setEmail} 
+                        autoCapitalize="none" 
                     />
                 </View>
 
-                <View style={tw`flex items-center mt-10`}>
-                    <Text style={tw`text-base font-medium`}>계정이 없으신가요?</Text>
-                    <Button title="계정 생성" onPress={() => navigation.navigate("CreateAccount")}></Button>
+                <View style={{ margin:20 }}>
+                    <Text style={{ fontWeight: "bold" }}>비밀번호</Text>
+                    <Input height={55} rounded="xl" mt="3" p="2" bg="gray.200" shadow={0.5} borderColor="gray.200" fontSize="md"
+                        onChangeText={setPassword}
+                        secureTextEntry={true}
+                    />
+                </View>
+
+                <View style={{ alignItems: "center", marginTop: 50 }}>
+                    <Text style={{ fontSize: 16, fontWeight: "500" }}>계정이 없으신가요?</Text>
+                    <Pressable onPress={() => navigation.navigate("CreateAccount")}>
+                        <Text style={{ marginTop: 10, color: 'dodgerblue', fontSize: 16, fontWeight: "bold" }}>계정 생성</Text>
+                    </Pressable>
                 </View>
             </View>
 
             <View>
-                <Pressable 
-                    style={tw`mx-5 flex justify-center items-center h-14 bg-black rounded-xl shadow-md`}
+                <Pressable mx="5" justifyContent="center" alignItems="center" h={55} bg="black" rounded="xl" shadow="1"
                     onPress={handleLogin}
                 >
-                    <Text style={tw`text-white text-xl font-medium`}>로그인</Text>
+                    <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 16 }}>로그인</Text>
                 </Pressable>
             </View>
 

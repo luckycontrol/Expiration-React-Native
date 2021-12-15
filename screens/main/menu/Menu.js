@@ -1,12 +1,9 @@
 import React, { useState } from 'react'
 import { View, Text, SafeAreaView, Image, TouchableOpacity, ScrollView, Alert } from 'react-native'
-import tw from "tailwind-react-native-classnames"
 import { useSelector, useDispatch } from 'react-redux'
 import { setCategory, deleteCategory, resetCategory } from '../../../features/Category/categorySlice'
-import { deleteCategory as DELETE_CATEGORY } from "../../../api/category/categoryApi"
-import { deleteManyProducts as DELETE_MANY_PRODUCTS } from '../../../api/product/productApi'
+import { categoryAPI, productAPI } from "../../../api"
 import * as Haptics from "expo-haptics"
-import url from "../../../api/url"
 
 import { logout as LOGOUT_REDUCER } from '../../../features/Account/accountSlice'
 import { resetCategoryList as RESET_CATEGORY_LIST_REDUCER } from '../../../features/Category/categorySlice'
@@ -23,22 +20,7 @@ const Menu = ({ navigation, ScaleTransitionEffect, setCreateCategory }) => {
     const [editCategory, setEditCategory] = useState(false);
 
     const removeCategory = async (categoryName) => {
-        const result = await fetch(url, {
-            method: "post",
-            headers: {
-                "content-type": "application/json",
-                "accept": "application/json"
-            },
-            body: JSON.stringify({
-                query: DELETE_CATEGORY,
-                variables: {
-                    email       : login.email,
-                    categoryName: categoryName
-                }
-            })
-        });
-
-        const { data: { deleteCategory: { _id } } } = await result.json();
+        const {data: {data: {deleteCategory: {_id}}}} = await categoryAPI.deleteCategory(login.email, categoryName)
 
         if (!_id) {
             dispatch(deleteCategory(categoryName))
@@ -46,20 +28,7 @@ const Menu = ({ navigation, ScaleTransitionEffect, setCreateCategory }) => {
     }
 
     const removeProductsInCategory = async (categoryName) => {
-        fetch(url, {
-            method: "post",
-            headers: {
-                "content-type"  : "application/json",
-                "accept"        : "application/json"
-            },
-            body: JSON.stringify({
-                query: DELETE_MANY_PRODUCTS,
-                variables: {
-                    email: login.email,
-                    categoryName: categoryName
-                }
-            })
-        });
+        productAPI.deleteManyProducts(login.email, categoryName)
     }
 
     const handleDeleteCategory = (categoryName) => (
@@ -126,16 +95,17 @@ const Menu = ({ navigation, ScaleTransitionEffect, setCreateCategory }) => {
             >
                 <Image
                     source={require("../../../assets/close.png")} 
-                    style={tw`w-5 h-5 mx-5`}
+                    style={{ width: 15, height: 15, marginHorizontal: 20 }}
                 />
             </TouchableOpacity>
 
-            <Text style={tw`m-5 text-white text-2xl font-bold`}>{login.name}님, 안녕하세요.</Text>
+            <Text style={{ color: "white", fontSize: 34, fontWeight: "bold", margin: 20 }}>{login.name}님{'\n'}안녕하세요.</Text>
 
             <ScrollView>
-                <View style={tw`m-5`}>
+                <View style={{ margin: 20 }}>
+                    {/* 카테고리, 편집 버튼 */}
                     <View style={{ width: 150, flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-                        <Text style={tw`text-white text-xl font-bold`}>카테고리</Text>
+                        <Text style={{ color: "white", fontWeight: "bold", fontSize: 24 }}>카테고리</Text>
                         <TouchableOpacity 
                             style={{ padding: 5, backgroundColor: editCategory ? "rgba(0, 0, 0, 0.5)" : "transparent", borderRadius: 5 }}
                             onPress={() => {
@@ -143,10 +113,12 @@ const Menu = ({ navigation, ScaleTransitionEffect, setCreateCategory }) => {
                                 setEditCategory(!editCategory);
                             }}
                         >
-                            <Text style={{ fontSize: 16, fontWeight: "500", color: "white" }}>편집</Text>
+                            <Text style={{ fontSize: 18, fontWeight: "bold", color: "white" }}>편집</Text>
                         </TouchableOpacity>
                     </View>
-                    <View style={tw`my-2`}>
+
+                    {/* 카테고리 항목들 출력 */}
+                    <View style={{ marginVertical: 14 }}>
                         {
                             categoryList.map(category => (
                                 <TouchableOpacity
@@ -166,13 +138,13 @@ const Menu = ({ navigation, ScaleTransitionEffect, setCreateCategory }) => {
                                         dispatch(setCategory(category));
                                     }}
                                 >
-                                    <Text style={tw`text-white font-bold`} >{category}</Text>
+                                    <Text style={{ color: "white", fontWeight: "bold", fontSize: 20 }} >{category}</Text>
                                     {
                                         editCategory && (
                                             <TouchableOpacity
                                                 onPress={() => handleDeleteCategory(category)}
                                             >
-                                                <Image style={{ width: 5, height: 5, padding: 7 }} source={require("../../../assets/close.png")} />
+                                                <Image style={{ width: 1, height: 1, opacity: 0.8, padding: 7 }} source={require("../../../assets/close.png")} />
                                             </TouchableOpacity>
                                         )
                                     }
@@ -182,6 +154,7 @@ const Menu = ({ navigation, ScaleTransitionEffect, setCreateCategory }) => {
                     </View>
                 </View>
 
+                {/* 카테고리 추가버튼 */}
                 <View>
                     <TouchableOpacity 
                         style={{ padding: 20 }}
@@ -189,21 +162,21 @@ const Menu = ({ navigation, ScaleTransitionEffect, setCreateCategory }) => {
                             setCreateCategory(true);
                         }}
                     >
-                        <Text style={{ color: "white", fontWeight: "bold" }} >카테고리 추가</Text>
+                        <Text style={{ color: "white", fontWeight: "bold", fontSize: 20 }} >카테고리 추가</Text>
                     </TouchableOpacity>
                 </View>
 
-                <View style={tw`m-5`}>
+                <View style={{ margin: 20 }}>
                     <TouchableOpacity
                         onPress={() => {
                             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                             handleClickSettingsBtn();
                         }}
                     >
-                        <Text style={{ color: "white", fontWeight: "bold", marginBottom: 10 }} >설정</Text>
+                        <Text style={{ color: "white", fontWeight: "bold", fontSize: 20, marginBottom: 10 }} >설정</Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={handleLogout} >
-                        <Text style={tw`text-white font-bold text-base`}>로그아웃 </Text>
+                        <Text style={{ color: "white", fontWeight: "bold", fontSize: 20 }}>로그아웃</Text>
                     </TouchableOpacity>
                 </View>
             </ScrollView>

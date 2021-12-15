@@ -1,3 +1,6 @@
+import axios from "axios"
+import url from "../url"
+
 export const createProduct = `mutation CreateProduct($email: String, $name: String, $type: String, $image: String, $expiration: String) {
     createProduct(email: $email, name: $name, type: $type, image: $image, expiration: $expiration) {
         _id
@@ -43,5 +46,61 @@ export const deleteManyProducts = `mutation DeleteManyProducts($email: String, $
         _id
     }
 }
-
 `
+
+class ProductAPI {
+
+    async createProduct() {
+
+    }
+
+    async getProducts(login, selectedCategory) {
+        const result = await axios.post(url, {
+            query       :   getProducts,
+            variables: {
+                email   :   login.email,
+                type    :   selectedCategory
+            }
+        })
+        
+        return result
+    }
+
+    async updateProduct(item, email, name, image, expiration) {
+        await axios.post(url, {
+            query       :   updateProduct,
+            variables: {
+                _id         :   item._id,
+                email       :   email,
+                name        :   name,
+                type        :   item.type, 
+                image       :   image,
+                expiration  :   expiration
+            }
+        })
+    }
+
+    async deleteProduct(login, productId) {
+        const result = await axios.post(url, {
+            query       :   deleteProduct,
+            variables: {
+                email   :   login.email,
+                _id     :   productId
+            }
+        })
+
+        return result
+    }
+
+    async deleteManyProducts(email, categoryName) {
+        await axios.post(url, {
+            query: deleteManyProducts,
+            variables: {
+                email       : email,
+                categoryName: categoryName
+            }
+        })
+    }
+}
+
+export const productAPI = new ProductAPI()
