@@ -24,7 +24,6 @@ export const deleteCategory = `mutation DeleteCategory($email: String, $category
 `
 
 class CategoryAPI {
-
     async getCategoryList(email) {
         const result = await axios.post(url, {
             query: getCategoryList,

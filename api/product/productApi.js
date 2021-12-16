@@ -49,9 +49,17 @@ export const deleteManyProducts = `mutation DeleteManyProducts($email: String, $
 `
 
 class ProductAPI {
-
-    async createProduct() {
-
+    async createProduct(email, name, selectedCategory, image, expiration) {
+        await axios.post(url, {
+            query: createProduct,
+            variables: {
+                email       : email,
+                name        : name,
+                type        : selectedCategory, 
+                image       : image, 
+                expiration  : expiration
+            }
+        })
     }
 
     async getProducts(login, selectedCategory) {
